@@ -1,0 +1,43 @@
+======================Start Prepare Data [Thu Nov  2 19:01:46 2023]====================
+======================Finish Prepare Data [Thu Nov  2 19:01:46 2023]====================
+======================Start Train Model [Thu Nov  2 19:01:46 2023]====================
+Epoch: 1 | Epoch Time: 0m 42s
+Train Loss: 0.4006783348846842 | Train Acc: 83.55577257885174%
+Val. Loss: 0.12887377180159093 | Val. Acc: 100.0%
+Epoch: 2 | Epoch Time: 0m 40s
+Train Loss: 0.10088918548585339 | Train Acc: 99.54723011363636%
+Val. Loss: 0.035685382597148416 | Val. Acc: 100.0%
+Epoch: 3 | Epoch Time: 0m 41s
+Train Loss: 0.03794099838176573 | Train Acc: 99.99556107954545%
+Val. Loss: 0.017198036331683396 | Val. Acc: 100.0%
+Epoch: 4 | Epoch Time: 0m 40s
+Train Loss: 0.022312230171254752 | Train Acc: 100.0%
+Val. Loss: 0.011916705453768373 | Val. Acc: 100.0%
+Epoch: 5 | Epoch Time: 0m 41s
+Train Loss: 0.016698138989423485 | Train Acc: 100.0%
+Val. Loss: 0.010125439986586571 | Val. Acc: 100.0%
+Test Loss: 0.010 | Test Acc: 100.00%
+======================Finish Train Model [Thu Nov  2 19:05:24 2023]====================
+======================Start Prepare Data [Thu Nov  9 21:48:08 2023]====================
+======================Finish Prepare Data [Thu Nov  9 21:48:08 2023]====================
+======================Start Train Model [Thu Nov  9 21:48:09 2023]====================
+======================Start Prepare Data [Thu Nov  9 21:50:05 2023]====================
+======================Finish Prepare Data [Thu Nov  9 21:50:05 2023]====================
+======================Start Train Model [Thu Nov  9 21:50:05 2023]====================
+Epoch: 1 | Epoch Time: 0m 45s
+Train Loss: 0.4006783348846842 | Train Acc: 83.55577257885174%
+Val. Loss: 0.12887377180159093 | Val. Acc: 100.0%
+Epoch: 2 | Epoch Time: 0m 41s
+Train Loss: 0.10088918548585339 | Train Acc: 99.54723011363636%
+Val. Loss: 0.035685382597148416 | Val. Acc: 100.0%
+Epoch: 3 | Epoch Time: 0m 41s
+Train Loss: 0.03794099838176573 | Train Acc: 99.99556107954545%
+Val. Loss: 0.017198036331683396 | Val. Acc: 100.0%
+Epoch: 4 | Epoch Time: 0m 41s
+Train Loss: 0.022312230171254752 | Train Acc: 100.0%
+Val. Loss: 0.011916705453768373 | Val. Acc: 100.0%
+Epoch: 5 | Epoch Time: 0m 41s
+Train Loss: 0.016698138989423485 | Train Acc: 100.0%
+Val. Loss: 0.010125439986586571 | Val. Acc: 100.0%
+Test Loss: 0.010 | Test Acc: 100.00%
+======================Finish Train Model [Thu Nov  9 21:53:48 2023]====================

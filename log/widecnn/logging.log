@@ -1,0 +1,78 @@
+# emb不变 中间channel为1 平均dim和token数两个维度，无fc
+======================Start Prepare Data [Thu Nov  9 15:11:37 2023]====================
+======================Finish Prepare Data [Thu Nov  9 15:11:37 2023]====================
+======================Start Train Model [Thu Nov  9 15:11:37 2023]====================
+Epoch: 1 | Epoch Time: 7m 31s
+Train Loss: 0.694134787063707 | Train Acc: 49.46239741349762%
+Val. Loss: 0.6935983791947364 | Val. Acc: 0.0%
+Epoch: 2 | Epoch Time: 7m 24s
+Train Loss: 0.6934406034309756 | Train Acc: 50.1252762041986%
+Val. Loss: 0.6933636233210564 | Val. Acc: 0.0%
+Epoch: 3 | Epoch Time: 7m 20s
+Train Loss: 0.6933147226544943 | Train Acc: 49.78397253223441%
+Val. Loss: 0.6932827308773994 | Val. Acc: 0.0%
+Epoch: 4 | Epoch Time: 7m 15s
+Train Loss: 0.6932534236799587 | Train Acc: 50.82662563601678%
+Val. Loss: 0.6932419493794442 | Val. Acc: 0.0%
+Epoch: 5 | Epoch Time: 7m 14s
+Train Loss: 0.6932261298325929 | Train Acc: 49.95067866349762%
+Val. Loss: 0.6932159557938575 | Val. Acc: 0.0%
+Test Loss: 0.693 | Test Acc: 0.00%
+======================Finish Train Model [Thu Nov  9 15:49:36 2023]====================
+# emb不变 中间channel为1 平均token维度，有fc
+======================Start Prepare Data [Thu Nov  9 18:47:06 2023]====================
+======================Finish Prepare Data [Thu Nov  9 18:47:06 2023]====================
+======================Start Train Model [Thu Nov  9 18:47:06 2023]====================
+Epoch: 1 | Epoch Time: 7m 21s
+Train Loss: 0.45937457644719293 | Train Acc: 100.0%
+Val. Loss: 0.015617628092877566 | Val. Acc: 100.0%
+Epoch: 2 | Epoch Time: 7m 20s
+Train Loss: 0.0051812661255429375 | Train Acc: 100.0%
+Val. Loss: 0.0022107026627054436 | Val. Acc: 100.0%
+Epoch: 3 | Epoch Time: 7m 23s
+Train Loss: 0.0018498549979995005 | Train Acc: 100.0%
+Val. Loss: 0.0015738810539914993 | Val. Acc: 100.0%
+# --batch_size=32
+======================Start Prepare Data [Thu Nov  9 19:20:19 2023]====================
+======================Finish Prepare Data [Thu Nov  9 19:20:19 2023]====================
+======================Start Train Model [Thu Nov  9 19:20:19 2023]====================
+Epoch: 1 | Epoch Time: 8m 12s
+Train Loss: 0.45937457644719293 | Train Acc: 100.0%
+Val. Loss: 0.015617628092877566 | Val. Acc: 100.0%
+Epoch: 2 | Epoch Time: 8m 30s
+Train Loss: 0.0051812661255429375 | Train Acc: 100.0%
+Val. Loss: 0.0022107026627054436 | Val. Acc: 100.0%
+Epoch: 3 | Epoch Time: 8m 37s
+Train Loss: 0.0018498549979995005 | Train Acc: 100.0%
+Val. Loss: 0.0015738810539914993 | Val. Acc: 100.0%
+Epoch: 4 | Epoch Time: 8m 24s
+Train Loss: 0.0015075750745216449 | Train Acc: 100.0%
+Val. Loss: 0.0013822950109897646 | Val. Acc: 100.0%
+Epoch: 5 | Epoch Time: 8m 30s
+Train Loss: 0.0013536581917089113 | Train Acc: 100.0%
+Val. Loss: 0.0012066723369571265 | Val. Acc: 100.0%
+# 报错：RuntimeError: CUDA error: an illegal memory access was encountered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1.
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+# --batch_size=16
+======================Start Prepare Data [Thu Nov  9 20:10:34 2023]====================
+======================Finish Prepare Data [Thu Nov  9 20:10:34 2023]====================
+======================Start Train Model [Thu Nov  9 20:10:34 2023]====================
+Epoch: 1 | Epoch Time: 8m 8s
+Train Loss: 0.45937457644719293 | Train Acc: 100.0%
+Val. Loss: 0.015617628092877566 | Val. Acc: 100.0%
+Epoch: 2 | Epoch Time: 8m 30s
+Train Loss: 0.0051812661255429375 | Train Acc: 100.0%
+Val. Loss: 0.0022107026627054436 | Val. Acc: 100.0%
+Epoch: 3 | Epoch Time: 8m 32s
+Train Loss: 0.0018498549979995005 | Train Acc: 100.0%
+Val. Loss: 0.0015738810539914993 | Val. Acc: 100.0%
+Epoch: 4 | Epoch Time: 8m 28s
+Train Loss: 0.0015075750745216449 | Train Acc: 100.0%
+Val. Loss: 0.0013822950109897646 | Val. Acc: 100.0%
+Epoch: 5 | Epoch Time: 8m 33s
+Train Loss: 0.0013536581917089113 | Train Acc: 100.0%
+Val. Loss: 0.0012066723369571265 | Val. Acc: 100.0%
+Test Loss: 0.001 | Test Acc: 100.00%
+======================Finish Train Model [Thu Nov  9 20:54:13 2023]====================
