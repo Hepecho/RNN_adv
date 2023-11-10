@@ -24,13 +24,13 @@ def predict_sentiment(model, sentence, device, min_len=5):
         if len(text) - 2 < min_len:
             text = text[1:-1] + [VOCAB['<PAD>']] * (min_len - len(text) + 2)
         text = torch.tensor(text)
-        print(len(text))
+        # print(len(text))
         text = text.unsqueeze(1)
         # [sent len, 1]
         text = text.to(device)
         output = model(text).squeeze(1)
         prediction = torch.sigmoid(output)
-        return prediction.item()
+        return prediction.item(), torch.round(prediction).item()
 
 
 if __name__ == '__main__':
@@ -91,7 +91,7 @@ if __name__ == '__main__':
         VOCAB, train_dataloader, valid_dataloader, test_dataloader = prepare_data(args)
         dataloader.VOCAB = VOCAB
 
-        # pad_idx = TEXT.vocab.stoi[TEXT.pad_token]  # 获取文本数据字段的填充标记（PAD）的索引，它将在模型中用于处理填充的标记
+        # 打印字典长度，确定是同一个预处理数据集
         print(len(VOCAB))
 
         if args.model == 'cnn':
@@ -99,7 +99,7 @@ if __name__ == '__main__':
                              output_dim=1, dropout=args.dropout, pad_idx=3)
         elif args.model == 'rnn':
             model = RNN(len(VOCAB), args.embedding_dim, args.hidden_size,
-                        output_dim=1, dropout=args.dropout, pad_idx=3)
+                        output_dim=1, pad_idx=3)
         else:
             model = WideCNN(len(VOCAB), args.embedding_dim, args.filters, args.filter_sizes,
                         output_dim=1, dropout=args.dropout, pad_idx=3)
@@ -129,9 +129,14 @@ if __name__ == '__main__':
                              output_dim=1, dropout=args.dropout, pad_idx=3)
         elif args.model == 'rnn':
             model = RNN(len(VOCAB), args.embedding_dim, args.hidden_size,
-                        output_dim=1, dropout=args.dropout, pad_idx=3)
+                        output_dim=1, pad_idx=3)
         else:
             model = WideCNN(len(VOCAB), args.embedding_dim, args.filters, args.filter_sizes,
                             output_dim=1, dropout=args.dropout, pad_idx=3)
         model.load_state_dict(torch.load(best_model_path))
-        print(predict_sentiment(model, "nice film, greate film, good film, good film", device))
+        with open('remark.txt', 'r', encoding='utf-8') as f:
+            content = f.read()
+        print(predict_sentiment(model, content, device))
+
+        # "nice film, greate film, terrific film"
+        # "bad film, lousy film, stupid film"

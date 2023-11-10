@@ -1,7 +1,6 @@
 import torch
 import time
 from utils import *
-from tqdm import tqdm
 from runx.logx import logx
 from os.path import join as ospj
 import os
@@ -33,6 +32,7 @@ def train(model, iterator, optimizer, criterion, device):
 
         epoch_loss += loss.item()
         epoch_acc += acc.item()
+        # print(acc.item())
 
     return epoch_loss / len(iterator), epoch_acc / len(iterator)
 
@@ -77,7 +77,9 @@ def train_model(args, model, optimizer, criterion, train_iterator, valid_iterato
         start_time = time.time()
         train_loss, train_acc = train(model, train_iterator, optimizer, criterion, device)
         logx.add_scalar('train_loss', train_loss, epoch)
+        logx.add_scalar('train_acc', train_acc, epoch)
         valid_loss, valid_acc = evaluate(model, valid_iterator, criterion, device)
+        logx.add_scalar('valid_loss', valid_loss, epoch)
         end_time = time.time()
 
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)

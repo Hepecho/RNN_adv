@@ -32,6 +32,7 @@ Val. Loss: 0.0022107026627054436 | Val. Acc: 100.0%
 Epoch: 3 | Epoch Time: 7m 23s
 Train Loss: 0.0018498549979995005 | Train Acc: 100.0%
 Val. Loss: 0.0015738810539914993 | Val. Acc: 100.0%
+# 爆显存
 # --batch_size=32
 ======================Start Prepare Data [Thu Nov  9 19:20:19 2023]====================
 ======================Finish Prepare Data [Thu Nov  9 19:20:19 2023]====================
@@ -55,7 +56,7 @@ Val. Loss: 0.0012066723369571265 | Val. Acc: 100.0%
 CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
 For debugging consider passing CUDA_LAUNCH_BLOCKING=1.
 Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
-# --batch_size=16
+# --batch_size=16 wo dropout
 ======================Start Prepare Data [Thu Nov  9 20:10:34 2023]====================
 ======================Finish Prepare Data [Thu Nov  9 20:10:34 2023]====================
 ======================Start Train Model [Thu Nov  9 20:10:34 2023]====================
@@ -76,3 +77,24 @@ Train Loss: 0.0013536581917089113 | Train Acc: 100.0%
 Val. Loss: 0.0012066723369571265 | Val. Acc: 100.0%
 Test Loss: 0.001 | Test Acc: 100.00%
 ======================Finish Train Model [Thu Nov  9 20:54:13 2023]====================
+# --batch_size=16 w dropout
+======================Start Prepare Data [Fri Nov 10 11:32:10 2023]====================
+======================Finish Prepare Data [Fri Nov 10 11:32:10 2023]====================
+======================Start Train Model [Fri Nov 10 11:32:10 2023]====================
+Epoch: 1 | Epoch Time: 7m 21s
+Train Loss: 0.504454118527726 | Train Acc: 97.98473011363636%
+Val. Loss: 0.024424642487429083 | Val. Acc: 100.0%
+Epoch: 2 | Epoch Time: 7m 23s
+Train Loss: 0.016199234192754375 | Train Acc: 99.91566051136364%
+Val. Loss: 0.0006153992278996156 | Val. Acc: 100.0%
+Epoch: 3 | Epoch Time: 7m 17s
+Train Loss: 0.004780710005930318 | Train Acc: 99.94673295454545%
+Val. Loss: 0.00021859328353457386 | Val. Acc: 100.0%
+Epoch: 4 | Epoch Time: 7m 13s
+Train Loss: 0.0034872324421567928 | Train Acc: 99.96892755681817%
+Val. Loss: 0.00012807246714601205 | Val. Acc: 100.0%
+Epoch: 5 | Epoch Time: 7m 24s
+Train Loss: 0.003331459247254481 | Train Acc: 99.9600497159091%
+Val. Loss: 0.00010081619847142065 | Val. Acc: 100.0%
+Test Loss: 0.000 | Test Acc: 100.00%
+======================Finish Train Model [Fri Nov 10 12:10:02 2023]====================

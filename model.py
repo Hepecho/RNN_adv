@@ -28,23 +28,18 @@ class CNN(nn.Module):
         # text = [batch size, sent len]
 
         embedded = self.embedding(text)
-
         # embedded = [batch size, sent len, emb dim]
 
         embedded = embedded.unsqueeze(1)
-
         # embedded = [batch size, 1, sent len, emb dim]
 
         conved = [F.relu(conv(embedded)).squeeze(3) for conv in self.convs]
-
         # conved_n = [batch size, n_filters, sent len - filter_sizes[n] + 1]
 
         pooled = [F.max_pool1d(conv, conv.shape[2]).squeeze(2) for conv in conved]
-
         # pooled_n = [batch size, n_filters]
 
         cat = self.dropout(torch.cat(pooled, dim=1))
-
         # cat = [batch size, n_filters * len(filter_sizes)]
 
         return self.fc(cat)  # [batch size, 1]
@@ -84,11 +79,9 @@ class WideCNN(nn.Module):
         # text = [batch size, sent len]
 
         embedded = self.embedding(text)
-
         # embedded = [batch size, sent len, emb dim]
 
         embedded = embedded.unsqueeze(1)
-
         # embedded = [batch size, 1, sent len, emb dim]
 
         for i, conv in enumerate(self.convs):
@@ -101,31 +94,24 @@ class WideCNN(nn.Module):
 
         # h_i = [batch size, n_filters, sent len, emb dim]
 
-        h_avg = torch.mean(h_i, dim=2).squeeze(1)   # 当n_filters=1时才可squeeze
+        h_avg = self.dropout(torch.mean(h_i, dim=2).squeeze(1))   # 当n_filters=1时才可squeeze
         # h_avg = [batch size, emb dim]
 
-        # print(h_avg.shape)
-
-        return self.fc(h_avg)  # [batch size. 1]
+        return self.fc(h_avg)  # [batch size, 1]
 
 
 class RNN(nn.Module):
-    def __init__(self, vocab_size, embedding_dim, hidden_size, output_dim, dropout, pad_idx):
+    def __init__(self, vocab_size, embedding_dim, hidden_size, output_dim, pad_idx):
         super().__init__()
 
         # self.embedding = nn.Embedding.from_pretrained(torch.Tensor(embedding_weight_matrix), freeze=True)
         self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=pad_idx)
 
         self.rnn = nn.LSTM(embedding_dim, hidden_size, batch_first=True)
-        # self.classifier = nn.Sequential(
-        #     nn.Linear(hidden_size, 128),
-        #     nn.ReLU(),
-        #     nn.Linear(128, 2),
-        #     # nn.Softmax()
-        # )
+
         self.fc = nn.Linear(hidden_size, output_dim)
 
-        self.dropout = nn.Dropout(dropout)
+        # self.dropout = nn.Dropout(dropout)
 
     def forward(self, text):
         # text = [sent len, batch size]
