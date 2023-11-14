@@ -13,6 +13,7 @@ from runx.logx import logx
 
 from dataloader import prepare_data, text_transform, label_transform
 import dataloader
+# from torchstat import stat
 
 
 def predict_sentiment(model, sentence, device, min_len=5):
@@ -137,6 +138,9 @@ if __name__ == '__main__':
         with open('remark.txt', 'r', encoding='utf-8') as f:
             content = f.read()
         print(predict_sentiment(model, content, device))
+
+        # model.eval()
+        # stat(model, input_size=(1, 200, 16))
 
         # "nice film, greate film, terrific film"
         # "bad film, lousy film, stupid film"
