@@ -3,6 +3,8 @@ from torchtext.datasets import IMDB
 from torchtext.data.utils import get_tokenizer
 from torchtext.vocab import build_vocab_from_iterator
 from torchtext.data.functional import to_map_style_dataset
+from torchtext.vocab import GloVe
+from torchtext.vocab import vocab
 
 from torch.utils.data import DataLoader
 from torch.nn.utils.rnn import pad_sequence
@@ -22,11 +24,13 @@ def yield_tokens(train_iter):
 tokenizer = get_tokenizer('basic_english')
 
 VOCAB = None
+# random
 text_transform = lambda x: [VOCAB['<BOS>']] + [VOCAB[token] for token in tokenizer(x)] + [VOCAB['<EOS>']]
 label_transform = lambda x: 1 if x == 'pos' else 0
 
+glove = None
 
-def collate_batch(batch):
+def collate_batch_random(batch):
     """
     padding_value将这个批次的句子全部填充成一样的长度，padding_value=word_vocab['<PAD>']=3
     """
@@ -36,6 +40,33 @@ def collate_batch(batch):
         processed_text = torch.tensor(text_transform(_text))
         text_list.append(processed_text)
     return torch.tensor(label_list), pad_sequence(text_list, padding_value=3.0)
+
+
+def collate_batch_glove(batch):
+    """
+    padding_value将这个批次的句子全部填充成一样的长度，padding_value=[0,..,0] (default)
+    """
+    label_list, text_list = [], []
+    for (_label, _text) in batch:
+        label_list.append(label_transform(_label))
+        text = []
+        for token in tokenizer(_text):
+            text.append(glove.get_vecs_by_tokens(token))
+        text_list.append(torch.tensor([item.cpu().detach().numpy() for item in text]).cuda())
+        # text里的包含多维tensor, gpu上的 tensor 不能直接转为 numpy, 要先在 cpu 上完成操做，再回到 gpu 上
+    return torch.tensor(label_list), pad_sequence(text_list)  # glove中不存在的token(包括特殊标记pad)返回全0向量
+
+
+def collate_batch_glove2(batch):
+    """
+    padding_value将这个批次的句子全部填充成一样的长度，padding_value=word_vocab['<PAD>']=3
+    """
+    label_list, text_list = [], []
+    for (_label, _text) in batch:
+        label_list.append(label_transform(_label))
+        processed_text = torch.tensor(text_transform(_text))
+        text_list.append(processed_text)
+    return torch.tensor(label_list), pad_sequence(text_list, padding_value=VOCAB['<PAD>'])
 
 
 def prepare_data(args):
@@ -52,15 +83,40 @@ def prepare_data(args):
         train_dataset = to_map_style_dataset(train_data)
         # print(next(iter(test_data)))
         num_train = int(len(train_dataset) * 0.90)
-        print(len(train_dataset))
+        # print(len(train_dataset)) 25000
         # exit()
         train_data, valid_data = random_split(train_dataset, [num_train, len(train_dataset) - num_train])
-        print(len(valid_data))
+        # print(len(valid_data)) 2500
 
         # 创建词表
-        VOCAB = build_vocab_from_iterator(yield_tokens(train_data), min_freq=10,
-                                          specials=['<unk>', '<BOS>', '<EOS>', '<PAD>'])  # 建立词表
-        VOCAB.set_default_index(VOCAB['<unk>'])
+        if args.embedding != 'random':
+            glove = GloVe(name='42B', dim=300)
+            # 返回的实例为Vectors类，主要有以下三个属性：
+            # stoi: 词到索引的字典：
+            # itos: 一个列表，索引到词的映射；
+            # vectors: 词向量
+            # word_vectors = glove.vectors
+            VOCAB_dict = glove.stoi  # 该VOCAB_dict是dict类，而random得到的VOCAB是Vocab类对象，两者不同，主函数要区分处理
+            # print(type(glove.stoi)) dict
+            # print(len(VOCAB)) 1917494
+            VOCAB_dict['<unk>'] = len(VOCAB_dict)
+            VOCAB_dict['<BOS>'] = VOCAB_dict['<unk>'] + 1
+            VOCAB_dict['<EOS>'] = VOCAB_dict['<unk>'] + 2
+            VOCAB_dict['<PAD>'] = VOCAB_dict['<unk>'] + 3
+            VOCAB = vocab(VOCAB_dict)  # 转换成Vocab类
+            VOCAB.set_default_index(VOCAB['<unk>'])
+            # print(len(VOCAB))
+            collate_batch = collate_batch_glove2
+            # VOCAB = glove.itos
+            # print(glove.stoi['me'])
+            # for i in range(10):
+            #     print(glove.itos[i])
+            # exit()
+        else:
+            VOCAB = build_vocab_from_iterator(yield_tokens(train_data), min_freq=10,
+                                              specials=['<unk>', '<BOS>', '<EOS>', '<PAD>'])  # 建立词表
+            VOCAB.set_default_index(VOCAB['<unk>'])
+            collate_batch = collate_batch_random
 
         with open('./data/vocab.pkl', 'wb') as f:
             dill.dump(VOCAB, f)
@@ -79,6 +135,8 @@ def prepare_data(args):
         with open('./data/test_dataloader_save.pkl', 'wb') as f:
             dill.dump(test_dataloader, f)
     else:
+        if args.embedding != 'random':
+            glove = GloVe(name='42B', dim=300)
         with open('./data/vocab.pkl', 'rb') as f:
             VOCAB = dill.load(f)
         with open('./data/train_dataloader_save.pkl', 'rb') as f:
@@ -91,4 +149,5 @@ def prepare_data(args):
     localtime = time.asctime(time.localtime(time.time()))
     logx.msg('======================Finish Prepare Data [{}]===================='.format(localtime))
 
-    return VOCAB, train_dataloader, valid_dataloader, test_dataloader
+    return VOCAB, glove, train_dataloader, valid_dataloader, test_dataloader
+

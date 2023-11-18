@@ -8,6 +8,7 @@ from matplotlib.pyplot import MultipleLocator
 
 color_par = {
     'cnn': '#5D9A6B',
+    'cnn_glove': '#B55D60',
     'widecnn': '#B55D60',
     'rnn': '#5875A4',
     'std': '#857AAB'
@@ -15,6 +16,7 @@ color_par = {
 
 marker_par = {
     'cnn': '.',
+    'cnn_glove': 'o',
     'widecnn': 'o',
     'rnn': 'v'
 }
@@ -57,15 +59,19 @@ def draw_graph(metric_data, img_path):
 if __name__ == '__main__':
     log_dir = 'log'
     image_dir = 'image'
-    model_list = ['cnn', 'widecnn', 'rnn']
+    # model_list = ['cnn', 'widecnn', 'rnn']
+    model_list = ['cnn', 'cnn_glove']
     metric_list = ['train_acc', 'train_loss', 'valid_loss']
 
     for i, me in enumerate(metric_list):
         me_data = {}
         me_data['name'] = me
-        img_path = ospj(image_dir, 'b16_' + me + '.png')
+        img_path = ospj(image_dir, 'pretrained_b16_' + me + '.png')
         for j, mo in enumerate(model_list):
-            csv_path = ospj(log_dir, mo, 'b16_' + me + '.csv')
+            if mo == 'cnn_glove':
+                csv_path = ospj(log_dir, 'cnn', 'glove_b16_' + me + '.csv')
+            else:
+                csv_path = ospj(log_dir, mo, 'b16_' + me + '.csv')
             data_pd = read_data(csv_path)
             me_data[mo] = data_pd['Value'].values
         draw_graph(me_data, img_path)

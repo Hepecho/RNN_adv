@@ -106,3 +106,26 @@ Train Loss: 0.009452583405866542 | Train Acc: 100.0%
 Val. Loss: 0.008875827956944703 | Val. Acc: 100.0%
 Test Loss: 0.009 | Test Acc: 100.00%
 ======================Finish Train Model [Fri Nov 10 14:35:27 2023]====================
+# python main.py --embedding glove --preprocess_data --batch_size 16  [freeze_embedding]
+======================Finish Prepare Data [Sat Nov 18 21:28:15 2023]====================
+======================Start Train Model [Sat Nov 18 21:28:15 2023]====================
+Epoch: 1 | Epoch Time: 5m 8s
+Train Loss: 0.23955373347133885 | Train Acc: 96.42412935323384%
+Val. Loss: 0.05606566352923964 | Val. Acc: 100.0%
+Epoch: 2 | Epoch Time: 5m 9s
+Train Loss: 0.04034861716274344 | Train Acc: 100.0%
+Val. Loss: 0.0304670802133668 | Val. Acc: 100.0%
+Epoch: 3 | Epoch Time: 5m 10s
+Train Loss: 0.031490452762351615 | Train Acc: 100.0%
+Val. Loss: 0.029044096874203652 | Val. Acc: 100.0%
+Epoch: 4 | Epoch Time: 5m 8s
+Train Loss: 0.029945302286000647 | Train Acc: 100.0%
+Val. Loss: 0.02752632573009676 | Val. Acc: 100.0%
+Epoch: 5 | Epoch Time: 5m 7s
+Train Loss: 0.028052267415267656 | Train Acc: 100.0%
+Val. Loss: 0.02560040351169504 | Val. Acc: 100.0%
+Test Loss: 0.026 | Test Acc: 100.00%
+======================Finish Train Model [Sat Nov 18 21:58:48 2023]====================
+
+======================Start Prepare Data [Sat Nov 18 23:09:33 2023]====================
+======================Finish Prepare Data [Sat Nov 18 23:09:41 2023]====================

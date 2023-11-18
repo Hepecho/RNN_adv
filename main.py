@@ -13,6 +13,7 @@ from runx.logx import logx
 
 from dataloader import prepare_data, text_transform, label_transform
 import dataloader
+from utils import freeze_layer
 # from torchstat import stat
 
 
@@ -38,7 +39,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Lab 3.1 RNN_adv')
     parser.add_argument('--mode', type=str, default='train',
                         help='train, eval')
-    parser.add_argument('--batch_size', nargs='+', default=64,
+    parser.add_argument('--batch_size', type=int, default=64,
                         help='input batch size for training (default: 64)')
     parser.add_argument('--max_vocab_size', type=int, default=25000,
                         help='max_vocab_size (default: 25000)')
@@ -60,6 +61,10 @@ if __name__ == '__main__':
                         help='SGD momentum (default: 0.5)')
     parser.add_argument('--cuda', default=True, type=bool,
                         help='disables CUDA training')
+    parser.add_argument('--embedding', default='random', type=str,
+                        help="embedding type ['random', 'glove']")
+    parser.add_argument('--freeze_embedding', action='store_true',
+                        help='freeze embedding layer, if false then fine-tuning embedding layer')
     parser.add_argument('--preprocess_data', action='store_true',
                         help='preprocess data, if false then load preprocessed data')
     parser.add_argument('--seed', type=int, default=1,
@@ -89,21 +94,27 @@ if __name__ == '__main__':
 
     if args.mode == 'train':
         logx.initialize(logdir=ospj(args.logdir, args.model), coolname=False, tensorboard=True)
-        VOCAB, train_dataloader, valid_dataloader, test_dataloader = prepare_data(args)
+        VOCAB, glove, train_dataloader, valid_dataloader, test_dataloader = prepare_data(args)
         dataloader.VOCAB = VOCAB
+        # if args.embedding == 'glove':
+        #     dataloader.glove = glove
 
         # 打印字典长度，确定是同一个预处理数据集
         print(len(VOCAB))
 
         if args.model == 'cnn':
             model = CNN(len(VOCAB), args.embedding_dim, args.filters, args.filter_sizes,
-                             output_dim=1, dropout=args.dropout, pad_idx=3)
+                        output_dim=1, dropout=args.dropout, pad_idx=VOCAB['<PAD>'], embedding=args.embedding,
+                        VOCAB=VOCAB, glove=glove)
         elif args.model == 'rnn':
             model = RNN(len(VOCAB), args.embedding_dim, args.hidden_size,
                         output_dim=1, pad_idx=3)
         else:
             model = WideCNN(len(VOCAB), args.embedding_dim, args.filters, args.filter_sizes,
                         output_dim=1, dropout=args.dropout, pad_idx=3)
+
+        if args.freeze_embedding:
+            freeze_layer(model.emmbedding)
 
         # 仅设置fc的w参数正则化
         fc_w = (param for name, param in model.fc.named_parameters() if name[-4:] != 'bias')
