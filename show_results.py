@@ -1,31 +1,28 @@
 import numpy as np
-import pandas as pd
 import os
 from os.path import join as ospj
 from fnmatch import fnmatch
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import MultipleLocator
+from utils import read_data
 
 color_par = {
     'cnn': '#5D9A6B',
-    'cnn_glove': '#B55D60',
+    'cnn_freeze': '#B55D60',
     'widecnn': '#B55D60',
     'rnn': '#5875A4',
+    'cnn_ft': '#5875A4',
     'std': '#857AAB'
 }
 
 marker_par = {
     'cnn': '.',
-    'cnn_glove': 'o',
+    'cnn_freeze': 'o',
     'widecnn': 'o',
-    'rnn': 'v'
+    'rnn': 'v',
+    'cnn_ft': 'v'
 }
 
-
-def read_data(csv_path):
-    pd_data = pd.read_csv(csv_path, sep=',', header='infer', usecols=['Step', 'Value'])
-    # pd_data['Status'] = pd_data['Status'].values
-    return pd_data
 
 def draw_graph(metric_data, img_path):
     x_axis_data = np.linspace(1, 5, 5)
@@ -60,16 +57,18 @@ if __name__ == '__main__':
     log_dir = 'log'
     image_dir = 'image'
     # model_list = ['cnn', 'widecnn', 'rnn']
-    model_list = ['cnn', 'cnn_glove']
+    model_list = ['cnn', 'cnn_freeze', 'cnn_ft']
     metric_list = ['train_acc', 'train_loss', 'valid_loss']
 
     for i, me in enumerate(metric_list):
         me_data = {}
         me_data['name'] = me
-        img_path = ospj(image_dir, 'pretrained_b16_' + me + '.png')
+        img_path = ospj(image_dir, 'all_emb_b16_' + me + '.png')
         for j, mo in enumerate(model_list):
-            if mo == 'cnn_glove':
-                csv_path = ospj(log_dir, 'cnn', 'glove_b16_' + me + '.csv')
+            if mo == 'cnn_freeze':
+                csv_path = ospj(log_dir, 'cnn', 'freeze_emb_b16_' + me + '.csv')
+            elif mo == 'cnn_ft':
+                csv_path = ospj(log_dir, 'cnn', 'ft_emb_b16_' + me + '.csv')
             else:
                 csv_path = ospj(log_dir, mo, 'b16_' + me + '.csv')
             data_pd = read_data(csv_path)

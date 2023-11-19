@@ -8,7 +8,7 @@ class CNN(nn.Module):
         super().__init__()
 
         if embedding != 'random':
-            # self.embedding = nn.Embedding.from_pretrained(embedding_pretrained.vectors, freeze=False)
+            # self.embedding = nn.Embedding.from_pretrained(glove.vectors, freeze=True)
             # self.embedding = None
             self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=pad_idx)
             # nn.Embedding其实就是一个矩阵，每一行都是一个词嵌入。每一个token都是整型索引，表示该token在词汇表里的序号。
@@ -18,8 +18,9 @@ class CNN(nn.Module):
             # 如果使用nn.Embedding的话，我们要编写非常复杂的预处理逻辑。
             # 为此，我们可以用GloVe类的get_vecs_by_tokens直接获取token的词嵌入，以代替nn.Embedding
             # 所以对于预训练的glove，我们不在模型中显式地定义embedding，而是采用在预处理数据的时候就转换成词向量，相当于将embedded过程提前
+            # print(len(self.embedding.weight.data))
             for i, token in enumerate(VOCAB.get_itos()):
-                self.embedding.weight.data[i] = glove.get_vecs_by_tokens(token)
+                self.embedding.weight.data[i] = glove.get_vecs_by_tokens(token)  # 对于glove没有见过的token统一初始化为全0
         else:
             self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=pad_idx)
         # padding_idx表示用于填充的参数索引

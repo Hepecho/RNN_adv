@@ -93,7 +93,7 @@ if __name__ == '__main__':
     torch.backends.cudnn.deterministic = True
 
     if args.mode == 'train':
-        logx.initialize(logdir=ospj(args.logdir, args.model), coolname=False, tensorboard=True)
+        logx.initialize(logdir=ospj(args.logdir, args.model), coolname=False, tensorboard=False)
         VOCAB, glove, train_dataloader, valid_dataloader, test_dataloader = prepare_data(args)
         dataloader.VOCAB = VOCAB
         # if args.embedding == 'glove':
@@ -114,8 +114,9 @@ if __name__ == '__main__':
                         output_dim=1, dropout=args.dropout, pad_idx=3)
 
         if args.freeze_embedding:
-            freeze_layer(model.emmbedding)
+            freeze_layer(model.embedding)
 
+        print("model.embedding.weight", model.embedding.weight)
         # 仅设置fc的w参数正则化
         fc_w = (param for name, param in model.fc.named_parameters() if name[-4:] != 'bias')
         fc_w_map = list(map(id, model.fc.parameters()))  # id函数返回对象的“标识值”，整数
@@ -130,6 +131,8 @@ if __name__ == '__main__':
 
         model = train_model(args, model, optimizer, criterion,
                             train_dataloader, valid_dataloader, test_dataloader, device)
+
+        print("model.embedding.weight", model.embedding.weight)
 
     else:
         best_model_path = ospj(args.ckptdir, args.model, 'best_model.pt')

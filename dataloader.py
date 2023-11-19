@@ -90,22 +90,24 @@ def prepare_data(args):
 
         # 创建词表
         if args.embedding != 'random':
-            glove = GloVe(name='42B', dim=300)
+            glove = GloVe(name='6B', dim=300)
             # 返回的实例为Vectors类，主要有以下三个属性：
             # stoi: 词到索引的字典：
             # itos: 一个列表，索引到词的映射；
             # vectors: 词向量
             # word_vectors = glove.vectors
-            VOCAB_dict = glove.stoi  # 该VOCAB_dict是dict类，而random得到的VOCAB是Vocab类对象，两者不同，主函数要区分处理
+            VOCAB_dict = glove.stoi  # 该VOCAB_dict是dict类，而random得到的VOCAB是Vocab类对象
+            # print(glove.get_vecs_by_tokens('<unk>'))
             # print(type(glove.stoi)) dict
-            # print(len(VOCAB)) 1917494
-            VOCAB_dict['<unk>'] = len(VOCAB_dict)
-            VOCAB_dict['<BOS>'] = VOCAB_dict['<unk>'] + 1
-            VOCAB_dict['<EOS>'] = VOCAB_dict['<unk>'] + 2
-            VOCAB_dict['<PAD>'] = VOCAB_dict['<unk>'] + 3
-            VOCAB = vocab(VOCAB_dict)  # 转换成Vocab类
+            # print(len(VOCAB_dict))
+            # VOCAB_dict['<unk>'] = len(VOCAB_dict)
+            # VOCAB_dict['<BOS>'] = VOCAB_dict['<unk>'] + 1
+            # VOCAB_dict['<EOS>'] = VOCAB_dict['<unk>'] + 2
+            # VOCAB_dict['<PAD>'] = VOCAB_dict['<unk>'] + 3
+            VOCAB = vocab(VOCAB_dict, specials=['<unk>', '<BOS>', '<EOS>', '<PAD>'])  # 转换成Vocab类
             VOCAB.set_default_index(VOCAB['<unk>'])
-            # print(len(VOCAB))
+            VOCAB_list = VOCAB.get_itos()
+            # print(VOCAB_list[0])
             collate_batch = collate_batch_glove2
             # VOCAB = glove.itos
             # print(glove.stoi['me'])
@@ -136,7 +138,7 @@ def prepare_data(args):
             dill.dump(test_dataloader, f)
     else:
         if args.embedding != 'random':
-            glove = GloVe(name='42B', dim=300)
+            glove = GloVe(name='6B', dim=300)
         with open('./data/vocab.pkl', 'rb') as f:
             VOCAB = dill.load(f)
         with open('./data/train_dataloader_save.pkl', 'rb') as f:

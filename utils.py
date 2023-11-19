@@ -1,6 +1,6 @@
 import torch
 import time
-
+import pandas as pd
 
 def binary_accuracy(preds, y):
     """
@@ -19,6 +19,23 @@ def epoch_time(start_time, end_time):
     elapsed_secs = int(elapsed_time - (elapsed_mins * 60))
     return elapsed_mins, elapsed_secs
 
+
 def freeze_layer(layer):
     for param in layer.parameters():
         param.requires_grad = False
+
+
+def save_data(cache, csv_path):
+    colums = list(cache.keys())
+    values = list(cache.values())
+    values_T = list(map(list, zip(*values)))
+    save = pd.DataFrame(columns=colums, data=values_T)
+    f1 = open(csv_path, mode='w', newline='')
+    save.to_csv(f1, encoding='gbk', index=False)
+    f1.close()
+
+
+def read_data(csv_path):
+    pd_data = pd.read_csv(csv_path, sep=',', header='infer', usecols=['Value'])
+    # pd_data['Status'] = pd_data['Status'].values
+    return pd_data

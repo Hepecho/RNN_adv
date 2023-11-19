@@ -72,14 +72,21 @@ def train_model(args, model, optimizer, criterion, train_iterator, valid_iterato
     localtime = time.asctime(time.localtime(time.time()))
     logx.msg('======================Start Train Model [{}]===================='.format(localtime))
 
+    train_loss_cache = {'Value': []}
+    train_acc_cache = {'Value': []}
+    valid_loss_cache = {'Value': []}
+
     for epoch in range(N_EPOCHS):
 
         start_time = time.time()
         train_loss, train_acc = train(model, train_iterator, optimizer, criterion, device)
-        logx.add_scalar('train_loss', train_loss, epoch)
-        logx.add_scalar('train_acc', train_acc, epoch)
+        # logx.add_scalar('train_loss', train_loss, epoch)
+        # logx.add_scalar('train_acc', train_acc, epoch)
+        train_loss_cache['Value'].append(train_loss)
+        train_acc_cache['Value'].append(train_acc)
         valid_loss, valid_acc = evaluate(model, valid_iterator, criterion, device)
-        logx.add_scalar('valid_loss', valid_loss, epoch)
+        # logx.add_scalar('valid_loss', valid_loss, epoch)
+        valid_loss_cache['Value'].append(train_loss)
         end_time = time.time()
 
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
@@ -94,6 +101,12 @@ def train_model(args, model, optimizer, criterion, train_iterator, valid_iterato
         logx.msg('Train Loss: {} | Train Acc: {}%'.format(train_loss, train_acc * 100))
         logx.msg('Val. Loss: {} | Val. Acc: {}%'.format(valid_loss, valid_acc * 100))
 
+    save_data(train_loss_cache, ospj(args.logdir, args.model,
+                                     args.embedding + '_b' + str(args.batch_size) + '_train_loss.csv'))
+    save_data(train_acc_cache, ospj(args.logdir, args.model,
+                                    args.embedding + '_b' + str(args.batch_size) + '_train_acc.csv'))
+    save_data(valid_loss_cache, ospj(args.logdir, args.model,
+                                     args.embedding + '_b' + str(args.batch_size) + '_valid_loss.csv'))
     model.load_state_dict(torch.load(best_model_path))
     test_loss, test_acc = evaluate(model, test_iterator, criterion, device)
 
