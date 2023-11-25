@@ -41,23 +41,7 @@ def collate_batch_random(batch):
         text_list.append(processed_text)
     return torch.tensor(label_list), pad_sequence(text_list, padding_value=3.0)
 
-
 def collate_batch_glove(batch):
-    """
-    padding_value将这个批次的句子全部填充成一样的长度，padding_value=[0,..,0] (default)
-    """
-    label_list, text_list = [], []
-    for (_label, _text) in batch:
-        label_list.append(label_transform(_label))
-        text = []
-        for token in tokenizer(_text):
-            text.append(glove.get_vecs_by_tokens(token))
-        text_list.append(torch.tensor([item.cpu().detach().numpy() for item in text]).cuda())
-        # text里的包含多维tensor, gpu上的 tensor 不能直接转为 numpy, 要先在 cpu 上完成操做，再回到 gpu 上
-    return torch.tensor(label_list), pad_sequence(text_list)  # glove中不存在的token(包括特殊标记pad)返回全0向量
-
-
-def collate_batch_glove2(batch):
     """
     padding_value将这个批次的句子全部填充成一样的长度，padding_value=word_vocab['<PAD>']=3
     """
@@ -97,23 +81,12 @@ def prepare_data(args):
             # vectors: 词向量
             # word_vectors = glove.vectors
             VOCAB_dict = glove.stoi  # 该VOCAB_dict是dict类，而random得到的VOCAB是Vocab类对象
-            # print(glove.get_vecs_by_tokens('<unk>'))
-            # print(type(glove.stoi)) dict
-            # print(len(VOCAB_dict))
-            # VOCAB_dict['<unk>'] = len(VOCAB_dict)
-            # VOCAB_dict['<BOS>'] = VOCAB_dict['<unk>'] + 1
-            # VOCAB_dict['<EOS>'] = VOCAB_dict['<unk>'] + 2
-            # VOCAB_dict['<PAD>'] = VOCAB_dict['<unk>'] + 3
+
             VOCAB = vocab(VOCAB_dict, specials=['<unk>', '<BOS>', '<EOS>', '<PAD>'])  # 转换成Vocab类
             VOCAB.set_default_index(VOCAB['<unk>'])
-            VOCAB_list = VOCAB.get_itos()
-            # print(VOCAB_list[0])
-            collate_batch = collate_batch_glove2
-            # VOCAB = glove.itos
-            # print(glove.stoi['me'])
-            # for i in range(10):
-            #     print(glove.itos[i])
-            # exit()
+
+            collate_batch = collate_batch_glove
+
         else:
             VOCAB = build_vocab_from_iterator(yield_tokens(train_data), min_freq=10,
                                               specials=['<unk>', '<BOS>', '<EOS>', '<PAD>'])  # 建立词表

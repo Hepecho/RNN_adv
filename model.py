@@ -7,23 +7,13 @@ class CNN(nn.Module):
                  embedding, VOCAB, glove):
         super().__init__()
 
+        self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=pad_idx)
         if embedding != 'random':
             # self.embedding = nn.Embedding.from_pretrained(glove.vectors, freeze=True)
             # self.embedding = None
-            self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=pad_idx)
             # nn.Embedding其实就是一个矩阵，每一行都是一个词嵌入。每一个token都是整型索引，表示该token在词汇表里的序号。
-            # 有了索引，有了矩阵，就可以得到token的词嵌入。
-            # 但是，有些token在词汇表中并不存在。我们得对输入做处理，把词汇表里没有的token转换成<unk>这个表示未知字符的特殊token。
-            # 同时，为了对齐序列的长度，我们还得添加<pad>这个特殊字符。而用GloVe直接生成的nn.Embedding里没有<unk>和<pad>字符。
-            # 如果使用nn.Embedding的话，我们要编写非常复杂的预处理逻辑。
-            # 为此，我们可以用GloVe类的get_vecs_by_tokens直接获取token的词嵌入，以代替nn.Embedding
-            # 所以对于预训练的glove，我们不在模型中显式地定义embedding，而是采用在预处理数据的时候就转换成词向量，相当于将embedded过程提前
-            # print(len(self.embedding.weight.data))
             for i, token in enumerate(VOCAB.get_itos()):
                 self.embedding.weight.data[i] = glove.get_vecs_by_tokens(token)  # 对于glove没有见过的token统一初始化为全0
-        else:
-            self.embedding = nn.Embedding(vocab_size, embedding_dim, padding_idx=pad_idx)
-        # padding_idx表示用于填充的参数索引
 
         self.convs = nn.ModuleList([
             nn.Conv2d(in_channels=1,
@@ -41,16 +31,11 @@ class CNN(nn.Module):
         # random: text = [sent len, batch size]
         # glove: text = [sent len, batch size, emb dim]
 
-        if self.embedding is not None:
-            text = text.permute(1, 0)
-            # text = [batch size, sent len]
+        text = text.permute(1, 0)
+        # text = [batch size, sent len]
 
-            embedded = self.embedding(text)
-            # embedded = [batch size, sent len, emb dim]
-
-        else:
-            embedded = text.permute(1, 0, 2)
-            # embedded = [batch size, sent len, emb dim]
+        embedded = self.embedding(text)
+        # embedded = [batch size, sent len, emb dim]
 
         embedded = embedded.unsqueeze(1)
         # embedded = [batch size, 1, sent len, emb dim]
