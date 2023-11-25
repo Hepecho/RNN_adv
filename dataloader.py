@@ -30,18 +30,7 @@ label_transform = lambda x: 1 if x == 'pos' else 0
 
 glove = None
 
-def collate_batch_random(batch):
-    """
-    padding_value将这个批次的句子全部填充成一样的长度，padding_value=word_vocab['<PAD>']=3
-    """
-    label_list, text_list = [], []
-    for (_label, _text) in batch:
-        label_list.append(label_transform(_label))
-        processed_text = torch.tensor(text_transform(_text))
-        text_list.append(processed_text)
-    return torch.tensor(label_list), pad_sequence(text_list, padding_value=3.0)
-
-def collate_batch_glove(batch):
+def collate_batch(batch):
     """
     padding_value将这个批次的句子全部填充成一样的长度，padding_value=word_vocab['<PAD>']=3
     """
@@ -85,13 +74,10 @@ def prepare_data(args):
             VOCAB = vocab(VOCAB_dict, specials=['<unk>', '<BOS>', '<EOS>', '<PAD>'])  # 转换成Vocab类
             VOCAB.set_default_index(VOCAB['<unk>'])
 
-            collate_batch = collate_batch_glove
-
         else:
             VOCAB = build_vocab_from_iterator(yield_tokens(train_data), min_freq=10,
                                               specials=['<unk>', '<BOS>', '<EOS>', '<PAD>'])  # 建立词表
             VOCAB.set_default_index(VOCAB['<unk>'])
-            collate_batch = collate_batch_random
 
         with open('./data/vocab.pkl', 'wb') as f:
             dill.dump(VOCAB, f)
